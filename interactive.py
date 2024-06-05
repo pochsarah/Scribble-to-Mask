@@ -17,8 +17,8 @@ class InteractiveManager:
     def __init__(self, model, image, mask):
         self.model = model
 
-        self.image = im_normalization(TF.to_tensor(image)).unsqueeze(0).cuda()
-        self.mask = TF.to_tensor(mask).unsqueeze(0).cuda()
+        self.image = im_normalization(TF.to_tensor(image)).unsqueeze(0)#.cuda()
+        self.mask = TF.to_tensor(mask).unsqueeze(0)#.cuda()
 
         h, w = self.image.shape[-2:]
         self.image, self.pad = pad_divide_by(self.image, 16)
@@ -61,8 +61,8 @@ class InteractiveManager:
 
     def run_s2m(self):
         # Convert scribbles to tensors
-        Rsp = torch.from_numpy(self.p_srb).unsqueeze(0).unsqueeze(0).float().cuda()
-        Rsn = torch.from_numpy(self.n_srb).unsqueeze(0).unsqueeze(0).float().cuda()
+        Rsp = torch.from_numpy(self.p_srb).unsqueeze(0).unsqueeze(0).float()#.cuda()
+        Rsn = torch.from_numpy(self.n_srb).unsqueeze(0).unsqueeze(0).float()#.cuda()
         Rs = torch.cat([Rsp, Rsn], 1)
         Rs, _ = pad_divide_by(Rs, 16)
 
@@ -103,8 +103,8 @@ args = parser.parse_args()
 
 # network stuff
 net = S2M()
-net.load_state_dict(torch.load(args.model))
-net = net.cuda().eval()
+net.load_state_dict(torch.load(args.model, map_location=torch.device('cpu')))
+net = net.eval() #net.cuda().eval()
 torch.set_grad_enabled(False)
 
 # Reading stuff
